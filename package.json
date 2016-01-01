@@ -1,0 +1,20 @@
+{
+  "name": "react-native-intent",
+  "version": "1.0.0",
+  "main": "index.js",
+  "keywords": [
+    "react",
+    "react-native",
+    "react-component",
+    "intent",
+    "text",
+    "android"
+  ],
+  "author": "Tal Cherniak <chertali@gmail.com>",
+  "license": "MIT",
+  "repository": "https://github.com/tal952/react-native-Intent",
+  "bugs": "https://github.com/tal952/react-native-Intent/issues",
+  "peerDependencies": {
+    "react-native": ">=0.13"
+  }
+}
