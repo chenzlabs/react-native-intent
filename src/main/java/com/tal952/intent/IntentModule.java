@@ -57,6 +57,8 @@ public class IntentModule extends ReactContextBaseJavaModule implements Activity
         final Activity activity = getCurrentActivity();
         final PackageManager pm = activity.getPackageManager();
         Intent i = pm.getLaunchIntentForPackage(uri);
+        i.addCategory(Intent.CATEGORY_LAUNCHER);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         activity.startActivity(i);
     }
 
