@@ -6,10 +6,12 @@ import android.content.pm.PackageManager;
 import android.util.SparseArray;
 
 import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 
 public class IntentModule extends ReactContextBaseJavaModule implements ActivityEventListener {
@@ -38,18 +40,18 @@ public class IntentModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public boolean isAppInstalled(final String uri) {
+    public void isAppInstalled(final String uri, final Promise promise) {
         final Activity activity = getCurrentActivity();
         final PackageManager pm = activity.getPackageManager();
-        boolean installed;
+        WritableMap map = Arguments.createMap();
         try {
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
-            installed = true;
+            map.putBoolean("installed", true);
+            promise.resolve(map);
         } catch (PackageManager.NameNotFoundException e) {
-            installed = false;
+            map.putBoolean("installed", false);
+            promise.resolve(map);
         }
-
-        return installed;
     }
 
     @ReactMethod
