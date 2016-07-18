@@ -8,6 +8,10 @@ npm install react-native-intent --save
 ```
 ### Add it to your android project
 
+#### Automatically with rnpm
+* `rnpm link`
+
+#### Manually
 * In `android/setting.gradle`
 
 ```gradle
@@ -31,30 +35,20 @@ dependencies {
 ```java
 import com.tal952.intent.IntentPackage;  // <--- import
 
-public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
-
-  private ReactInstanceManager mReactInstanceManager;
+public class MainActivity extends ReactActivity {
   ......
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    mReactRootView = new ReactRootView(this);
-
-    mReactInstanceManager = ReactInstanceManager.builder()
-      .setApplication(getApplication())
-      .setBundleAssetName("index.android.bundle")
-      .setJSMainModuleName("index.android")
-      .addPackage(new MainReactPackage())
-      .addPackage(new IntentPackage()) // <------ add this line to your MainActivity class
-      .setUseDeveloperSupport(BuildConfig.DEBUG)
-      .setInitialLifecycleState(LifecycleState.RESUMED)
-      .build();
-
-    mReactRootView.startReactApplication(mReactInstanceManager, "Sample", null);
-
-    setContentView(mReactRootView);
-  }
+  /**
+     * A list of packages used by the app. If the app uses additional views
+     * or modules besides the default ones, add more packages here.
+     */
+    @Override
+    protected List<ReactPackage> getPackages() {
+        return Arrays.<ReactPackage>asList(
+            new MainReactPackage(),
+            new IntentPackage() // <-- add this line
+        );
+    }
 
   ......
   @Override
@@ -68,10 +62,37 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
 
 ## Example / Usage of video capture
 ```javascript
-var Intent = require('react-native-intent');
+import Intent from 'react-native-intent';
 
-var ACTION_VIDEO_CAPTURE = "android.media.action.VIDEO_CAPTURE";
-var ACTION_VIDEO_CAPTURE_REQUEST_ID = 20001;
+const ACTION_VIDEO_CAPTURE = "android.media.action.VIDEO_CAPTURE";
+const ACTION_VIDEO_CAPTURE_REQUEST_ID = 20001;
 
-var data = await Intent.startActivityForResult(ACTION_VIDEO_CAPTURE, ACTION_VIDEO_CAPTURE_REQUEST_ID);
+const data = await Intent.startActivityForResult(ACTION_VIDEO_CAPTURE, ACTION_VIDEO_CAPTURE_REQUEST_ID);
 ```
+
+
+## Example / launch another app
+```javascript
+import Intent from 'react-native-intent';
+
+const package = 'com.facebook.katana';
+
+if (Intent.isAppInstalled(package)) {
+  Intent.startIntentForPackage(package);
+} else {
+  const url = `market://details?id=${package}`;
+  Linking.canOpenURL(url).then(supported => {
+    if (supported) {
+      Linking.openURL(url);
+    } else {
+      Linking.openURL(`https://play.google.com/store/apps/details?id=${package}`);
+    }
+  })
+}
+
+```
+
+
+### TODO
+* Promises ?
+* Check if the activity result thing actually works

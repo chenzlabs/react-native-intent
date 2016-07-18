@@ -1,4 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.tal952.intent">
+    package="com.tal952.intent">
 
+    <uses-sdk
+        android:minSdkVersion="16"
+        android:targetSdkVersion="23" />
 </manifest>
