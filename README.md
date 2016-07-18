@@ -49,14 +49,6 @@ public class MainActivity extends ReactActivity {
             new IntentPackage() // <-- add this line
         );
     }
-
-  ......
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) { // <------ add this method to your MainActivity class
-    super.onActivityResult(requestCode, resultCode, data);
-
-    this.mReactInstanceManager.onActivityResult(requestCode, resultCode, data);
-  }
 }
 ```
 
@@ -75,24 +67,21 @@ const data = await Intent.startActivityForResult(ACTION_VIDEO_CAPTURE, ACTION_VI
 ```javascript
 import Intent from 'react-native-intent';
 
-const package = 'com.facebook.katana';
-
-if (Intent.isAppInstalled(package)) {
-  Intent.startIntentForPackage(package);
+const pkgName = 'com.facebook.katana';
+const installed = await Intent.isAppInstalled(pkgName);
+if (installed) {
+  Intent.startIntentForPackage(pkgName);
 } else {
-  const url = `market://details?id=${package}`;
+  const url = `market://details?id=${pkgName}`;
   Linking.canOpenURL(url).then(supported => {
     if (supported) {
+      // Open in play store
       Linking.openURL(url);
     } else {
-      Linking.openURL(`https://play.google.com/store/apps/details?id=${package}`);
+      // If play store is not installed, open it in browser
+      Linking.openURL(`https://play.google.com/store/apps/details?id=${pkgName}`);
     }
   })
 }
 
 ```
-
-
-### TODO
-* Promises ?
-* Check if the activity result thing actually works
