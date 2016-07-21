@@ -44,6 +44,7 @@ public class IntentModule extends ReactContextBaseJavaModule implements Activity
         final Activity activity = getCurrentActivity();
         final PackageManager pm = activity.getPackageManager();
         WritableMap map = Arguments.createMap();
+
         try {
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
             map.putBoolean("installed", true);
@@ -55,13 +56,22 @@ public class IntentModule extends ReactContextBaseJavaModule implements Activity
     }
 
     @ReactMethod
-    public void startIntentForPackage(final String uri) {
+    public void startIntentForPackage(final String uri, final Promise promise) {
         final Activity activity = getCurrentActivity();
         final PackageManager pm = activity.getPackageManager();
+        WritableMap map = Arguments.createMap();
+
         Intent i = pm.getLaunchIntentForPackage(uri);
-        i.addCategory(Intent.CATEGORY_LAUNCHER);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        activity.startActivity(i);
+        if (i == null) {
+            map.putBoolean("launched", false);
+            promise.resolve(map);
+        } else {
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(i);
+            map.putBoolean("launched", true);
+            promise.resolve(map);
+        }
     }
 
     @Override
