@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.SparseArray;
 
-import com.facebook.react.bridge.ActivityEventListener;
+// import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -14,7 +14,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 
-public class IntentModule extends ReactContextBaseJavaModule implements ActivityEventListener {
+public class IntentModule extends ReactContextBaseJavaModule {
 
     final ReactApplicationContext reactContext;
     final SparseArray<Promise> promises = new SparseArray<>();
@@ -22,7 +22,7 @@ public class IntentModule extends ReactContextBaseJavaModule implements Activity
     public IntentModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-        this.reactContext.addActivityEventListener(this);
+        // this.reactContext.addActivityEventListener(this);
     }
 
     @Override
@@ -30,14 +30,14 @@ public class IntentModule extends ReactContextBaseJavaModule implements Activity
         return "Intent";
     }
 
-    @ReactMethod
-    public void startActivityForResult(final String action, final int requestCode, final Promise promise) {
-        Intent intent = new Intent(action);
-        if (intent.resolveActivity(this.reactContext.getPackageManager()) != null) {
-            this.reactContext.startActivityForResult(intent, requestCode, null);
-        }
-        promises.put(requestCode, promise);
-    }
+    // @ReactMethod
+    // public void startActivityForResult(final String action, final int requestCode, final Promise promise) {
+    //     Intent intent = new Intent(action);
+    //     if (intent.resolveActivity(this.reactContext.getPackageManager()) != null) {
+    //         this.reactContext.startActivityForResult(intent, requestCode, null);
+    //     }
+    //     promises.put(requestCode, promise);
+    // }
 
     @ReactMethod
     public void isAppInstalled(final String uri, final Promise promise) {
@@ -74,15 +74,15 @@ public class IntentModule extends ReactContextBaseJavaModule implements Activity
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        WritableNativeMap obj = new WritableNativeMap();
-
-        obj.putInt("requestCode", requestCode);
-        obj.putInt("resultCode", resultCode);
-        obj.putString("data", data != null ? data.getDataString() : null);
-
-        promises.get(requestCode).resolve(obj);
-        promises.remove(requestCode);
-    }
+    // @Override
+    // public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    //     WritableNativeMap obj = new WritableNativeMap();
+    //
+    //     obj.putInt("requestCode", requestCode);
+    //     obj.putInt("resultCode", resultCode);
+    //     obj.putString("data", data != null ? data.getDataString() : null);
+    //
+    //     promises.get(requestCode).resolve(obj);
+    //     promises.remove(requestCode);
+    // }
 }
