@@ -3,18 +3,27 @@ package com.tal952.intent;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.v4.util.ArrayMap;
+import android.util.Log;
 import android.util.SparseArray;
 
-// import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.uimanager.annotations.ReactProp;
+
+import java.util.Map;
+
+// import com.facebook.react.bridge.ActivityEventListener;
 
 public class IntentModule extends ReactContextBaseJavaModule {
+
+    public static final String TAG = "IntentModule";
 
     final ReactApplicationContext reactContext;
     final SparseArray<Promise> promises = new SparseArray<>();
@@ -71,6 +80,52 @@ public class IntentModule extends ReactContextBaseJavaModule {
             activity.startActivity(i);
             map.putBoolean("launched", true);
             promise.resolve(map);
+        }
+    }
+
+    @ReactMethod
+    public void getLaunchIntentPath(Promise promise) {
+        Log.d(TAG, "getLaunchIntentPath: moi moi :)");
+        final Activity activity = getCurrentActivity();
+        Intent intent;
+        try {
+            intent = activity.getIntent();
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Activity didn't have an intent", e);
+            promise.reject(e);
+            return;
+        }
+
+        Uri uri = intent.getData();
+        if (uri != null) {
+            Log.d(TAG, "getLaunchIntentPath: " + uri.getPath());
+            promise.resolve(uri.getPath());
+        } else {
+            Log.d(TAG, "getLaunchIntentPath: Uri was null");
+        }
+    }
+
+    @ReactMethod
+    public void getLaunchIntentArguments(Promise promise) {
+        Log.d(TAG, "getLaunchIntentArguments: moi moi :)");
+        final Activity activity = getCurrentActivity();
+        Intent intent;
+        try {
+            intent = activity.getIntent();
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Activity didn't have an intent", e);
+            promise.reject(e);
+            return;
+        }
+
+        // Map<String, String> params = new ArrayMap<>();
+
+        Uri uri = intent.getData();
+        if (uri != null) {
+            Log.d(TAG, "getLaunchIntentArguments: " + uri.getEncodedQuery());
+            promise.resolve(uri.getEncodedQuery());
+        } else {
+            Log.d(TAG, "getLaunchIntentArguments: Uri was null");
         }
     }
 
