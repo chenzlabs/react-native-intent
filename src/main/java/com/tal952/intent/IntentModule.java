@@ -14,6 +14,8 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 
+import android.net.Uri;
+
 public class IntentModule extends ReactContextBaseJavaModule {
 
     final ReactApplicationContext reactContext;
@@ -70,6 +72,28 @@ public class IntentModule extends ReactContextBaseJavaModule {
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.startActivity(i);
             map.putBoolean("launched", true);
+            promise.resolve(map);
+        }
+    }
+
+    @ReactMethod
+    public void startOculusIntentForPackage(final String uri, final Promise promise) {
+        final Activity activity = getCurrentActivity();
+        final PackageManager pm = activity.getPackageManager();
+        WritableMap map = Arguments.createMap();
+
+        Intent i = new Intent();
+        if (i == null) {
+            map.putBoolean("launched", false);
+            promise.resolve(map);
+        } else {
+            i.setAction(Intent.ACTION_MAIN);
+	    i.setClassName("com.oculus.vrshell", "com.oculus.vrshell.MainActivity");
+            i.setData(Uri.parse("apk://" + uri));
+
+	    boolean launchable = i.resolveActivity(pm) != null;
+            if (launchable) { activity.startActivity(i); }
+            map.putBoolean("launched", launchable);
             promise.resolve(map);
         }
     }
