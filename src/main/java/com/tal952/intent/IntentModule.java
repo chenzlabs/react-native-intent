@@ -98,6 +98,29 @@ public class IntentModule extends ReactContextBaseJavaModule {
         }
     }
 
+    @ReactMethod
+    public void startOculusIntentExtraStringForPackage(final String uri, final String extraName, final String extraValue, final Promise promise) {
+        final Activity activity = getCurrentActivity();
+        final PackageManager pm = activity.getPackageManager();
+        WritableMap map = Arguments.createMap();
+
+        Intent i = new Intent();
+        if (i == null) {
+            map.putBoolean("launched", false);
+            promise.resolve(map);
+        } else {
+            i.setAction(Intent.ACTION_MAIN);
+	    i.setClassName("com.oculus.vrshell", "com.oculus.vrshell.MainActivity");
+            i.setData(Uri.parse("apk://" + uri));
+            i.putExtra(extraName, extraValue);
+
+	    boolean launchable = i.resolveActivity(pm) != null;
+            if (launchable) { activity.startActivity(i); }
+            map.putBoolean("launched", launchable);
+            promise.resolve(map);
+        }
+    }
+
     // @Override
     // public void onActivityResult(int requestCode, int resultCode, Intent data) {
     //     WritableNativeMap obj = new WritableNativeMap();
